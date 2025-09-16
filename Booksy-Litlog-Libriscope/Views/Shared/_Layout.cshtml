@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title class="navbar-brand">@ViewData["Title"] - Litlog</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Litlog.styles.css" asp-append-version="true" />
+    <style>
+        header {
+            width: 100%;
+            background: #222 !important;
+        }
+        nav.navbar {
+            background: #222 !important;
+        }
+        .navbar, .navbar-brand {
+            color: #fff !important;
+            border-bottom: 2px solid #3399ff;
+        }
+        .navbar-nav .nav-link {
+            color: #b3c6e7 !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #66ccff !important;
+        }
+    </style>
+</head>
+<body>
+    <header class="header w-100" style="background:#222;">
+        <nav class="header navbar navbar-expand-sm navbar-toggleable-sm navbar-dark border-bottom box-shadow mb-3">
+            <div class="header-container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Litlog</a>
+                <div class="navbar-collapse collapse show">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Livros" asp-action="Favoritos">Favoritos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Livros" asp-action="Catalogo">Catálogo</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Livros" asp-action="Diario">Diário</a>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <partial name="_LoginPartial" />
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2025 - Litlog - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

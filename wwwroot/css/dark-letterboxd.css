@@ -1,0 +1,65 @@
+body {
+    background: #181818;
+    color: #e1e1e1;
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+}
+
+a, .btn, button {
+    color: #00b300;
+    background: none;
+    border: none;
+    transition: color 0.2s;
+}
+
+a:hover, .btn:hover, button:hover {
+    color: #53ff53;
+}
+
+.livro-detalhes-container,
+.livro-info,
+.comentarios-section {
+    background: #222;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px #000a;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.livro-capa-detalhe {
+    border: 2px solid #393939;
+    background: #222;
+}
+
+textarea {
+    background: #181818;
+    color: #e1e1e1;
+    border: 1px solid #393939;
+    border-radius: 4px;
+    padding: 0.5rem;
+}
+
+.comentario {
+    background: #232323;
+    border-left: 4px solid #00b300;
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border-radius: 4px;
+}
+
+h1, h2, h3 {
+    color: #00b300;
+}
+
+button {
+    background: #00b300;
+    color: #181818;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #53ff53;
+    color: #181818;
+}

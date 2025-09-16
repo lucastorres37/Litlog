@@ -1,0 +1,23 @@
+/* Estiliza o botão de fechar (X) do modal */
+.btn-close {
+    filter: none !important;
+    opacity: 1 !important;
+    background: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color: #c7d3e3 !important; /* cor igual à caixa de texto */
+}
+
+.btn-close svg, .btn-close::before {
+    color: #c7d3e3 !important;
+}
+
+.btn-close:hover, .btn-close:focus {
+    color: #fff !important;
+    background: none !important;
+    opacity: 1 !important;
+}
+.btn-close:hover svg, .btn-close:focus svg,
+.btn-close:hover::before, .btn-close:focus::before {
+    color: #fff !important;
+}
