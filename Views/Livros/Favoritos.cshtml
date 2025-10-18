@@ -1,0 +1,15 @@
+﻿@model List<Litlog.Models.Livro>
+<h2>Favoritos</h2>
+@if (Model.Any())
+{
+    <ul>
+        @foreach (var livro in Model)
+        {
+            <li>@livro.Titulo</li>
+        }
+    </ul>
+}
+else
+{
+    <p>Nenhum livro favoritado ainda.</p>
+}

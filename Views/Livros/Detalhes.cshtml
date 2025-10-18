@@ -1,0 +1,222 @@
+﻿@model Litlog.Models.Livro
+
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="livro-detalhes-container">
+    <div class="livro-info">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <img src="@Model.CapaUrl" alt="@Model.Titulo" class="livro-capa-detalhe" />
+            <!-- Botão marcar como lido -->
+            <button type="button" class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#logarModal-@Model.Id">
+                Review ou Log...
+            </button>
+        </div>
+        <div class="livro-texto">
+            <h1>@Model.Titulo</h1>
+            <h3>@Model.Autor</h3>
+            <p class="sinopse">@Model.Sinopse</p>
+        </div>
+    </div>
+
+    <div class="comentarios-section">
+        <h2>Reviews</h2>
+
+        <form asp-action="Comentar" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <textarea name="conteudo"></textarea>
+            <button type="submit">Comentar</button>
+        </form>
+
+        <div class="comentarios-lista">
+            @{
+                var comentarios = ViewBag.Comentarios as List<Litlog.Models.Comentario>;
+            }
+
+        </div>
+    </div>
+
+    <!-- Pop-up de log -->
+    <div class="modal fade" id="logarModal-@Model.Id" tabindex="-1" aria-labelledby="logarModalLabel-@Model.Id" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form asp-action="LogarLivroLido" asp-controller="Livros" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logarModalLabel-@Model.Id">Logar leitura</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="livroId" value="@Model.Id" />
+
+                        <div class="review-flex">
+                            <img src="@Model.CapaUrl" alt="@Model.Titulo" class="review-capa" />
+                            <div class="review-main">
+                                <!-- Título do livro -->
+                                <div class="review-title-row">
+                                    <div class="review-title-year">
+                                        <span class="review-title">@Model.Titulo</span>
+                                        @if (Model.Ano.HasValue && Model.Ano > 0)
+                                        {
+                                            <span class="review-year">@Model.Ano</span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="fav-checkbox-row">
+                                    <label class="fav-checkbox-label">
+                                        <input type="checkbox" id="fav-@Model.Id" name="favorito" value="true" class="fav-checkbox" />
+                                        <span class="custom-checkbox"></span>
+                                        Adicionar aos favoritos
+                                    </label>
+                                </div>
+
+                                <textarea class="review-box" id="review-text" name="comentario" placeholder="Add a review..."></textarea>
+
+                                <div class="rating-like-row centered-rating">
+                                    <div class="rating-group">
+                                        <div class="rating-labels">
+                                            <span class="rating-label">Rating</span>
+                                            <span id="popup-rating-label" class="rating-value">0 out of 5</span>
+                                        </div>
+                                        <div class="star-rating" data-rating="0" id="popup-star-rating">
+                                            <input type="hidden" id="popup-rating-value" name="rating" value="0" />
+                                            <span class="star" data-value="1">
+                                                <span class="half left"></span>
+                                                <span class="half right"></span>
+                                            </span>
+                                            <span class="star" data-value="2">
+                                                <span class="half left"></span>
+                                                <span class="half right"></span>
+                                            </span>
+                                            <span class="star" data-value="3">
+                                                <span class="half left"></span>
+                                                <span class="half right"></span>
+                                            </span>
+                                            <span class="star" data-value="4">
+                                                <span class="half left"></span>
+                                                <span class="half right"></span>
+                                            </span>
+                                            <span class="star" data-value="5">
+                                                <span class="half left"></span>
+                                                <span class="half right"></span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="like-group">
+                                        <span class="like-label">Like</span>
+                                        <label for="like-@Model.Id" class="heart-checkbox" tabindex="0" aria-label="Curtir">
+                                            <input type="checkbox" id="like-@Model.Id" name="like" value="true" style="display:none;" />
+                                            <svg viewBox="0 0 24 24" class="heart-svg">
+                                                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                                                    fill="none" stroke="#bbb" stroke-width="2" />
+                                            </svg>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var btn = document.getElementById("btnMais");
+            if (btn) {
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    var sinopse = document.querySelector(".sinopse");
+                    sinopse.innerText = "@Model.Sinopse";
+                });
+            }
+        });
+
+        // Coração de like ao livro
+        document.querySelectorAll('.heart-checkbox').forEach(function(label) {
+            label.addEventListener('keydown', function(e) {
+                if (e.key === ' ' || e.key === 'Enter') {
+                    e.preventDefault();
+                    var checkbox = document.getElementById(label.getAttribute('for'));
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                }
+            });
+        });
+
+        // lógica estrelas de avaliaçao
+        document.addEventListener("DOMContentLoaded", function () {
+            const stars = document.querySelectorAll('#popup-star-rating .star');
+            const ratingInput = document.getElementById('popup-rating-value');
+            const ratingLabel = document.getElementById('popup-rating-label');
+            let selectedRating = 0;
+
+            stars.forEach((star, i) => {
+                const value = i + 1;
+                const left = star.querySelector('.half.left');
+                const right = star.querySelector('.half.right');
+
+                left.addEventListener('click', () => setRating(value - 0.5));
+                right.addEventListener('click', () => setRating(value));
+            });
+
+            function setRating(val) {
+                selectedRating = val;
+                ratingInput.value = val;
+                highlightStars(val);
+                ratingLabel.textContent = val + ' out of 5';
+            }
+
+            function highlightStars(val) {
+                stars.forEach((star, i) => {
+                    star.classList.remove('filled', 'half-filled');
+                    const starValue = i + 1;
+                    if (val >= starValue) {
+                        star.classList.add('filled');
+                    } else if (val === starValue - 0.5) {
+                        star.classList.add('half-filled');
+                    }
+                });
+            }
+
+            function setRating(val) {
+                selectedRating = val;
+                ratingInput.value = val.toString().replace(',', '.');
+                highlightStars(val);
+                ratingLabel.textContent = val + ' out of 5';
+            }
+        });
+
+        // 
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector('#logarModal-@Model.Id form');
+            if (form) {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const data = new FormData(form);
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: data,
+                        headers: {
+                            'RequestVerificationToken': form.querySelector('input[name="__RequestVerificationToken"]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('logarModal-@Model.Id'));
+                            modal.hide();
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+}
