@@ -1,0 +1,18 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\Areas",
+    "\\Areas\\Identity",
+    "\\Areas\\Identity\\Pages",
+    "\\Controllers",
+    "\\Data",
+    "\\Migrations",
+    "\\Models",
+    "\\obj",
+    "\\Properties",
+    "\\Services",
+    "\\Views"
+  ],
+  "SelectedNode": "\\Litlog.csproj",
+  "PreviewInSolutionExplorer": false
+}

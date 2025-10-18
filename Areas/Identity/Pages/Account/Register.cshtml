@@ -1,0 +1,121 @@
+@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Registrar";
+}
+
+<style>
+    body {
+        background: #181818;
+        font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+        color: #e1e1e1;
+        margin: 0;
+        padding: 0;
+    }
+    .register-container {
+        max-width: 400px;
+        margin: 60px auto;
+        background: #232323;
+        border-radius: 12px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.7);
+        padding: 2.5rem 2rem 2rem 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .register-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #2196f3;
+        margin-bottom: 1.5rem;
+        letter-spacing: 1px;
+    }
+    .register-form label {
+        font-size: 1rem;
+        color: #e1e1e1;
+        margin-bottom: 0.3rem;
+        display: block;
+    }
+    .register-form input[type="email"],
+    .register-form input[type="password"] {
+        width: 100%;
+        padding: 0.7rem;
+        margin-bottom: 1.2rem;
+        border: none;
+        border-radius: 6px;
+        background: #181818;
+        color: #e1e1e1;
+        font-size: 1rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        outline: none;
+        transition: background 0.2s;
+    }
+    .register-form input[type="email"]:focus,
+    .register-form input[type="password"]:focus {
+        border: 1.5px solid #2196f3;
+        color: #e1e1e1;
+    }
+    .register-form button {
+        width: 100%;
+        padding: 0.8rem;
+        background: linear-gradient(90deg, #2196f3 60%, #1565c0 100%);
+        color: #fff;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(33,150,243,0.15);
+        transition: background 0.2s;
+    }
+    .register-form button:hover {
+        background: linear-gradient(90deg, #1565c0 60%, #2196f3 100%);
+    }
+    .register-links {
+        margin-top: 1.5rem;
+        text-align: center;
+    }
+    .register-links a {
+        color: #2196f3;
+        text-decoration: none;
+        font-weight: 500;
+        margin: 0 0.5rem;
+        transition: color 0.2s;
+    }
+    .register-links a:hover {
+        color: #fff;
+        text-decoration: underline;
+    }
+    .validation-summary-errors {
+        color: #ff4c4c;
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-title">Criar Conta</div>
+    <form method="post" asp-antiforgery="true" class="register-form">
+        <div asp-validation-summary="All" class="validation-summary-errors"></div>
+        <label asp-for="Input.Email">Email</label>
+        <input asp-for="Input.Email" type="email" autocomplete="username" />
+        <span asp-validation-for="Input.Email"></span>
+
+        <label asp-for="Input.Password">Senha</label>
+        <input asp-for="Input.Password" type="password" autocomplete="new-password" />
+        <span asp-validation-for="Input.Password"></span>
+
+        <label asp-for="Input.ConfirmPassword">Confirmar Senha</label>
+        <input asp-for="Input.ConfirmPassword" type="password" autocomplete="new-password" />
+        <span asp-validation-for="Input.ConfirmPassword"></span>
+
+        <button type="submit">Registrar</button>
+    </form>
+    <div class="register-links">
+        <a href="/Account/Login">Já tem conta? Entrar</a>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
