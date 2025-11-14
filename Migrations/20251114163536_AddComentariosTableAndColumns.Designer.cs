@@ -4,6 +4,7 @@ using Litlog.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Booksy_Litlog_Libriscope.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251114163536_AddComentariosTableAndColumns")]
+    partial class AddComentariosTableAndColumns
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,9 +63,6 @@ namespace Booksy_Litlog_Libriscope.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("DiarioId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("LivroId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -71,8 +71,6 @@ namespace Booksy_Litlog_Libriscope.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("DiarioId");
 
                     b.ToTable("Comentarios");
                 });
@@ -368,15 +366,6 @@ namespace Booksy_Litlog_Libriscope.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("Litlog.Models.Comentario", b =>
-                {
-                    b.HasOne("Litlog.Models.Diario", "Diario")
-                        .WithMany()
-                        .HasForeignKey("DiarioId");
-
-                    b.Navigation("Diario");
                 });
 
             modelBuilder.Entity("Litlog.Models.Diario", b =>

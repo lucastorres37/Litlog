@@ -20,12 +20,13 @@
         </div>
     </div>
 
-    <div class="comentarios-section">
+    <!-- Comentários de usuários -->
+@*     <div class="comentarios-section">
         <h2>Reviews</h2>
 
         <form asp-action="Comentar" method="post">
             <input type="hidden" name="id" value="@Model.Id" />
-            <textarea name="conteudo"></textarea>
+            <textarea name="conteudo" class="review-box"></textarea>
             <button type="submit">Comentar</button>
         </form>
 
@@ -35,7 +36,7 @@
             }
 
         </div>
-    </div>
+    </div> *@
 
     <!-- Pop-up de log -->
     <div class="modal fade" id="logarModal-@Model.Id" tabindex="-1" aria-labelledby="logarModalLabel-@Model.Id" aria-hidden="true">

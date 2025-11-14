@@ -16,7 +16,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Litlog")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d8b1655fda7ba6f077b1dcc02a831edffbe6ad4c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c73db04109d9531794b7070b9552d49616d083ff")]
 [assembly: System.Reflection.AssemblyProductAttribute("Litlog")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Litlog")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -1,13 +1,21 @@
 @font-face {
     font-family: 'GraphikWeb';
-    src: local('Graphik Web'), local('GraphikWeb'),
-         url('/fonts/GraphikWeb-Regular.woff2') format('woff2'),
-         url('/fonts/GraphikWeb-Regular.woff') format('woff');
+    src: local('Graphik Web'), local('GraphikWeb'), url('/fonts/GraphikWeb-Regular.woff2') format('woff2'), url('/fonts/GraphikWeb-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
+html, body {
+    height: 100%;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
 body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     background: #181818;
     color: #e1e1e1;
     font-family: 'GraphikWeb', 'Inter', 'Segoe UI', Arial, sans-serif;
@@ -20,9 +28,9 @@ a, .btn, button {
     transition: color 0.2s;
 }
 
-a:hover, .btn:hover, button:hover {
-    color: #66ccff;
-}
+    a:hover, .btn:hover, button:hover {
+        color: #66ccff;
+    }
 
 .livro-detalhes-container {
     max-width: 900px;
@@ -84,13 +92,13 @@ a:hover, .btn:hover, button:hover {
         border: none;
     }
 
-    .comentarios-section button:hover,
-    .btn-primary:hover,
-    .comentarios-section button:focus,
-    .btn-primary:focus {
-        background-color: #0069d9 !important;
-        color: #fff !important;
-    }
+        .comentarios-section button:hover,
+        .btn-primary:hover,
+        .comentarios-section button:focus,
+        .btn-primary:focus {
+            background-color: #0069d9 !important;
+            color: #fff !important;
+        }
 
 .comentarios-lista {
     margin-top: 20px;
@@ -118,10 +126,10 @@ button, .btn-primary {
     border: none;
 }
 
-button:hover, .btn-primary:hover {
-    background: #66ccff;
-    color: #181818;
-}
+    button:hover, .btn-primary:hover {
+        background: #66ccff;
+        color: #181818;
+    }
 
 header {
     width: 100%;
@@ -143,7 +151,7 @@ header {
 .navbar-brand {
     font-size: 24px;
     font-weight: 700;
-    letter-spacing: 2px;    
+    letter-spacing: 2px;
     color: #fff !important;
     margin-right: 32px;
     text-transform: none;
@@ -154,10 +162,10 @@ header {
 
 .navbar-nav.me-auto {
     display: flex;
-    gap: 0;     
+    gap: 0;
 }
 
-.navbar-nav.ms-auto {       
+.navbar-nav.ms-auto {
     display: flex;
     gap: 8px;
 }
@@ -173,19 +181,48 @@ header {
     padding: 8px 12px;
 }
 
-.navbar-nav .nav-link:last-child {
-    margin-right: 0;
-}
+    .navbar-nav .nav-link:last-child {
+        margin-right: 0;
+    }
 
-.navbar-nav .nav-link:hover {
-    color: #66ccff !important;
-}
+    .navbar-nav .nav-link:hover {
+        color: #66ccff !important;
+    }
 
 .container {
     margin: 0 auto !important;
     text-align: center;
     max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    min-height: 0;
 }
+
+main[role="main"] {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    min-height: 0;
+}
+
+.catalog-wrapper {
+    display: flex;
+    flex-direction: column;
+    flex: 1 0 auto;
+    min-height: 0;
+}
+
+.catalog-content {
+    flex: 1 0 auto; /* grows to fill available space */
+    min-height: 0;
+}
+
+.catalog-pagination {
+    margin-top: 1rem;
+    align-self: center;
+}
+
 
 .livro-detalhes-container,
 .livro-info,
@@ -282,10 +319,10 @@ header {
     transition: width 0.2s, height 0.2s, background-size 0.2s;
 }
 
-.modal-content .btn-close:hover,
-.modal-content .btn-close:focus {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.146 2.146a.7.7 0 0 1 .99 0L8 7.01l4.864-4.864a.7.7 0 1 1 .99.99L8.99 8l4.864 4.864a.7.7 0 1 1-.99.99L8 8.99l-4.864 4.864a.7.7 0 1 1-.99-.99L7.01 8 2.146 3.136a.7.7 0 0 1 0-.99z' fill='%23fff' stroke='%23fff' stroke-width='1.25'/%3E%3C/svg%3E") !important;
-}
+    .modal-content .btn-close:hover,
+    .modal-content .btn-close:focus {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.146 2.146a.7.7 0 0 1 .99 0L8 7.01l4.864-4.864a.7.7 0 1 1 .99.99L8.99 8l4.864 4.864a.7.7 0 1 1-.99.99L8 8.99l-4.864 4.864a.7.7 0 1 1-.99-.99L7.01 8 2.146 3.136a.7.7 0 0 1 0-.99z' fill='%23fff' stroke='%23fff' stroke-width='1.25'/%3E%3C/svg%3E") !important;
+    }
 
 /* Review/Rating/Like */
 .review-box {
@@ -331,57 +368,57 @@ header {
     gap: 0.1em;
 }
 
-.star-rating .star {
-    position: relative;
-    width: 2.2rem;
-    height: 2.2rem;
-    display: inline-block;
-    font-family: Arial, "Segoe UI Symbol", "Segoe UI Emoji", sans-serif !important;
-    vertical-align: middle;
-}
+    .star-rating .star {
+        position: relative;
+        width: 2.2rem;
+        height: 2.2rem;
+        display: inline-block;
+        font-family: Arial, "Segoe UI Symbol", "Segoe UI Emoji", sans-serif !important;
+        vertical-align: middle;
+    }
 
-.star-rating .star::before {
-    content: '\2605';
-    display: block;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    font-size: 2.2rem;
-    color: #ccc;
-    z-index: 1;
-    pointer-events: none;
-    line-height: 2.2rem;
-}
+        .star-rating .star::before {
+            content: '\2605';
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 2.2rem;
+            color: #ccc;
+            z-index: 1;
+            pointer-events: none;
+            line-height: 2.2rem;
+        }
 
-.star-rating .star.filled::before {
-    color: #3399ff !important;
-}
+        .star-rating .star.filled::before {
+            color: #3399ff !important;
+        }
 
-.star-rating .star.half-filled::before {
-    background: linear-gradient(to right, #3399ff 50%, #ccc 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    color: #3399ff;
-}
+        .star-rating .star.half-filled::before {
+            background: linear-gradient(to right, #3399ff 50%, #ccc 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: #3399ff;
+        }
 
-.star-rating .half {
-    position: absolute;
-    top: 0;
-    width: 50%;
-    height: 100%;
-    z-index: 2;
-    cursor: pointer;
-}
+    .star-rating .half {
+        position: absolute;
+        top: 0;
+        width: 50%;
+        height: 100%;
+        z-index: 2;
+        cursor: pointer;
+    }
 
-.star-rating .half.left {
-    left: 0;
-}
+        .star-rating .half.left {
+            left: 0;
+        }
 
-.star-rating .half.right {
-    right: 0;
-}
+        .star-rating .half.right {
+            right: 0;
+        }
 
 .review-flex {
     display: flex;
@@ -518,24 +555,6 @@ star-rating {
     border-color: #6cc3a0;
 }
 
-.custom-checkbox::after {
-    content: "";
-    position: absolute;
-    left: 6px;
-    top: 2px;
-    width: 8px;
-    height: 14px;
-    border: solid #fff;
-    border-width: 0 3px 3px 0;
-    opacity: 0;
-    transform: scale(0.8) rotate(45deg);
-    transition: opacity 0.2s;
-}
-
-.fav-checkbox:checked + .custom-checkbox::after {
-    opacity: 1;
-}
-
 .fav-checkbox:focus + .custom-checkbox {
     box-shadow: 0 0 0 2px #6cc3a0;
     outline: none;
@@ -593,10 +612,12 @@ star-rating {
     border-collapse: separate;
     border-spacing: 0 10px;
 }
-.diario-table th, .diario-table td {
-    padding: 10px;
-    vertical-align: middle;
-}
+
+    .diario-table th, .diario-table td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
 .calendar-box {
     background: #333;
     border-radius: 8px;
@@ -604,16 +625,19 @@ star-rating {
     display: inline-block;
     text-align: center;
 }
+
 .month {
     display: block;
     font-weight: bold;
     font-size: 1.1em;
 }
+
 .year {
     display: block;
     font-size: 0.9em;
     color: #aaa;
 }
+
 .cover-img {
     width: 40px;
     height: 60px;
@@ -621,20 +645,32 @@ star-rating {
     margin-right: 10px;
     vertical-align: middle;
 }
+
 .book-title {
     font-weight: bold;
     font-size: 1.1em;
     margin-left: 5px;
 }
+
 .star {
     color: #00ff66;
     font-size: 1.2em;
 }
+
 .like-heart {
     color: #888;
     font-size: 1.3em;
     cursor: pointer;
 }
-.like-heart.liked {
-    color: orange;
+
+    .like-heart.liked {
+        color: orange;
+    }
+
+.footer {
+    flex-shrink: 0;
+    background: #111;
+    color: #e1e1e1;
+    padding: 1rem;
+    border-top: 1px solid #222;
 }

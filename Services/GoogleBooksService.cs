@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -21,74 +22,153 @@ namespace Litlog.Services
             _dbContext = dbContext;
         }
 
+
         public async Task<List<Livro>> BuscarLivrosAsync(string termo)
         {
-            var response = await _httpClient.GetAsync($"https://www.googleapis.com/books/v1/volumes?q={termo}&maxResults=40");
+            var (items, _) = await BuscarLivrosAsync(termo, 0, 40);
+            return items;
+        }
+
+        public async Task<(List<Livro> Items, int TotalItems)> BuscarLivrosAsync(string termo, int startIndex = 0, int maxResults = 40)
+        {
+            var query = string.IsNullOrWhiteSpace(termo) ? "marvel" : termo;
+            var encoded = Uri.EscapeDataString(query);
+            maxResults = Math.Clamp(maxResults, 1, 40);
+            var response = await _httpClient.GetAsync($"https://www.googleapis.com/books/v1/volumes?q={encoded}&startIndex={startIndex}&maxResults={maxResults}");
             if (!response.IsSuccessStatusCode)
-                return new List<Livro>();
+                return (new List<Livro>(), 0);
 
             var json = await response.Content.ReadAsStringAsync();
-            var resultado = JsonDocument.Parse(json);
+            using var doc = JsonDocument.Parse(json);
+
+            int totalItems = 0;
+            if (doc.RootElement.TryGetProperty("totalItems", out var totalEl) && totalEl.ValueKind == JsonValueKind.Number)
+            {
+                totalItems = totalEl.GetInt32();
+            }
+
+            if (!doc.RootElement.TryGetProperty("items", out var itemsEl) || itemsEl.ValueKind != JsonValueKind.Array)
+                return (new List<Livro>(), totalItems);
 
             var livros = new List<Livro>();
-            foreach (var item in resultado.RootElement.GetProperty("items").EnumerateArray())
+            foreach (var item in itemsEl.EnumerateArray())
             {
-                var volumeInfo = item.GetProperty("volumeInfo");
-                double? avaliacao = volumeInfo.TryGetProperty("averageRating", out var rating) ? rating.GetDouble() : null;
-                
+                if (!item.TryGetProperty("volumeInfo", out var volumeInfo))
+                    continue;
+
+                var id = item.TryGetProperty("id", out var idEl) ? idEl.GetString() ?? "" : "";
+                var titulo = volumeInfo.TryGetProperty("title", out var titleEl) ? titleEl.GetString() ?? "" : "";
+                var autor = "Autor desconhecido";
+                if (volumeInfo.TryGetProperty("authors", out var authorsEl) && authorsEl.ValueKind == JsonValueKind.Array)
+                {
+                    var authors = authorsEl.EnumerateArray().Select(a => a.GetString()).Where(s => !string.IsNullOrEmpty(s));
+                    autor = string.Join(", ", authors);
+                    if (string.IsNullOrEmpty(autor))
+                        autor = "Autor desconhecido";
+                }
+
+                var sinopse = volumeInfo.TryGetProperty("description", out var descEl) ? descEl.GetString() ?? "Sem sinopse disponível" : "Sem sinopse disponível";
+
+                string capa = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png";
+                if (volumeInfo.TryGetProperty("imageLinks", out var imagens) && imagens.TryGetProperty("thumbnail", out var thumb))
+                {
+                    capa = thumb.GetString() ?? capa;
+                }
+
+                double? avaliacao = null;
+                if (volumeInfo.TryGetProperty("averageRating", out var rating) && rating.ValueKind == JsonValueKind.Number)
+                {
+                    if (rating.TryGetDouble(out var r))
+                        avaliacao = r;
+                }
+
                 livros.Add(new Livro
                 {
-                    Id = item.GetProperty("id").GetString() ?? "",
-                    Titulo = volumeInfo.GetProperty("title").GetString() ?? "",
-                    Autor = volumeInfo.TryGetProperty("authors", out var autores) ? string.Join(", ", autores.EnumerateArray().Select(a => a.GetString())) : "Autor desconhecido",
-                    Sinopse = volumeInfo.TryGetProperty("description", out var desc) ? desc.GetString().Truncate(500) ?? "" : "Sem sinopse disponível",
-                    CapaUrl = volumeInfo.TryGetProperty("imageLinks", out var imagens) && imagens.TryGetProperty("thumbnail", out var thumb) ? thumb.GetString() ?? "" : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png",
+                    Id = id,
+                    Titulo = titulo,
+                    Autor = autor,
+                    Sinopse = sinopse.Truncate(1000),
+                    CapaUrl = capa,
                     Avaliacao = avaliacao
                 });
             }
 
             livros = livros.OrderByDescending(l => l.Avaliacao ?? 0).ToList();
-            livros = livros.Where(l => !string.IsNullOrEmpty(l.CapaUrl) && !l.CapaUrl.Contains("No_image_available")).ToList();
 
-            return livros;
+            return (livros, totalItems);
         }
 
         public async Task<List<Livro>> BuscarLivrosAsyncPorIds(List<string> ids)
         {
-            var todosLivros = await BuscarLivrosAsync("");
-            return todosLivros.Where(l => ids.Contains(l.Id)).ToList();
-     
+            var result = new List<Livro>();
+            if (ids == null || ids.Count == 0)
+                return result;
+
+            foreach (var id in ids.Distinct())
+            {
+                try
+                {
+                    var livro = await BuscarLivroPorIdAsync(id);
+                    if (livro != null)
+                        result.Add(livro);
+                }
+                catch
+                {
+                    
+                }
+            }
+
+            return result;
         }
-        public async Task<Livro> BuscarLivroPorIdAsync(string id)
+
+        public async Task<Livro?> BuscarLivroPorIdAsync(string id)
         {
-            // AJUDA DO COPILOT ENTENDI NADA
-            // O id do Google Books normalmente é uma string, mas seu modelo usa int.
-            // Se o id for realmente string, troque o tipo do parâmetro para string.
-            // Aqui, convertemos para string para montar a URL.
-            var response = await _httpClient.GetAsync($"https://www.googleapis.com/books/v1/volumes/{id}");
+            if (string.IsNullOrWhiteSpace(id))
+                return null;
+
+            var encodedId = Uri.EscapeDataString(id);
+            var response = await _httpClient.GetAsync($"https://www.googleapis.com/books/v1/volumes/{encodedId}");
             if (!response.IsSuccessStatusCode)
                 return null;
 
             var json = await response.Content.ReadAsStringAsync();
-            var resultado = JsonDocument.Parse(json);
+            using var doc = JsonDocument.Parse(json);
 
-            if (!resultado.RootElement.TryGetProperty("volumeInfo", out var volumeInfo))
+            if (!doc.RootElement.TryGetProperty("volumeInfo", out var volumeInfo))
                 return null;
 
-            double? avaliacao = volumeInfo.TryGetProperty("averageRating", out var rating) ? rating.GetDouble() : null;
+            var titulo = volumeInfo.TryGetProperty("title", out var titleEl) ? titleEl.GetString() ?? "" : "";
+            var autor = "Autor desconhecido";
+            if (volumeInfo.TryGetProperty("authors", out var authorsEl) && authorsEl.ValueKind == JsonValueKind.Array)
+            {
+                var authors = authorsEl.EnumerateArray().Select(a => a.GetString()).Where(s => !string.IsNullOrEmpty(s));       
+                autor = string.Join(", ", authors);
+            }
 
-            var livro = new Livro
+            var sinopse = volumeInfo.TryGetProperty("description", out var descEl) ? descEl.GetString() ?? "Sem sinopse disponível" : "Sem sinopse disponível";
+
+            string capa = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png";
+            if (volumeInfo.TryGetProperty("imageLinks", out var imagens) && imagens.TryGetProperty("thumbnail", out var thumb))
+            {
+                capa = thumb.GetString() ?? capa;
+            }
+
+            double? avaliacao = null;
+            if (volumeInfo.TryGetProperty("averageRating", out var rating) && rating.ValueKind == JsonValueKind.Number)
+            {
+                if (rating.TryGetDouble(out var r))
+                    avaliacao = r;
+            }
+
+            return new Livro
             {
                 Id = id,
-                Titulo = volumeInfo.GetProperty("title").GetString() ?? "",
-                Autor = volumeInfo.TryGetProperty("authors", out var autores) ? string.Join(", ", autores.EnumerateArray().Select(a => a.GetString())) : "Autor desconhecido",
-                Sinopse = volumeInfo.TryGetProperty("description", out var desc) ? desc.GetString() ?? "" : "Sem sinopse disponível",
-                CapaUrl = volumeInfo.TryGetProperty("imageLinks", out var imagens) && imagens.TryGetProperty("thumbnail", out var thumb) ? thumb.GetString() ?? "" : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/480px-No_image_available.svg.png",
+                Titulo = titulo,
+                Autor = autor,
+                Sinopse = sinopse.Truncate(1000),
+                CapaUrl = capa,
                 Avaliacao = avaliacao
             };
-
-            return livro;
         }
-
     }
 }
